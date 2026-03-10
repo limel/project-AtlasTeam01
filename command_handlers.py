@@ -1,5 +1,5 @@
-from decorators import input_error
 from address_book import AddressBook, Record
+from decorators import input_error
 
 
 def check_if_args_provided(args: list):
@@ -78,11 +78,10 @@ def show_birthday(args: list, book: AddressBook):
 
 @input_error
 def birthdays(book: AddressBook):
-    is_upcoming_bds_available = len(book.get_upcoming_birthdays()) > 0
+    upcoming_birthdays = book.get_upcoming_birthdays()
     birthdays = [
-        f"{birthday["name"]} - {birthday["congratulation_date"]}"
-        for birthday in book.get_upcoming_birthdays()
+        f"{birthday['name']} - {birthday['congratulation_date']}"
+        for birthday in upcoming_birthdays
     ]
-    return (
-        f"Upcoming birthdays:\n{'\n'.join(birthdays) if is_upcoming_bds_available else '- empty'}"
-    )
+    birthday_list = "\n".join(birthdays) if birthdays else "- empty"
+    return f"Upcoming birthdays:\n{birthday_list}"

@@ -1,6 +1,7 @@
 from collections import UserDict
 from datetime import datetime, timedelta
 
+
 # check branch rules
 class Field:
     def __init__(self, value):
@@ -19,7 +20,9 @@ class Phone(Field):
 
     def __init__(self, phone):
         if len(phone) != Phone.REQUIRED_LENGTH:
-            raise ValueError(f"The phone number must be {Phone.REQUIRED_LENGTH} digits long")
+            raise ValueError(
+                f"The phone number must be {Phone.REQUIRED_LENGTH} digits long"
+            )
 
         self.value = phone
 
@@ -31,8 +34,8 @@ class Birthday(Field):
         try:
             birthday_date = datetime.strptime(date, Birthday.DATE_FORMAT)
             self.value = birthday_date.date()
-        except ValueError:
-            raise ValueError("Invalid date format. Use DD.MM.YYYY")
+        except ValueError as error:
+            raise ValueError("Invalid date format. Use DD.MM.YYYY") from error
 
     def __str__(self):
         return self.value.strftime(Birthday.DATE_FORMAT)
@@ -130,7 +133,9 @@ class AddressBook(UserDict):
                     next_monday = upcoming_bd + timedelta(days=additional_days_number)
                     congratulation_date = next_monday
 
-                congratulation_date_string = congratulation_date.strftime(Birthday.DATE_FORMAT)
+                congratulation_date_string = congratulation_date.strftime(
+                    Birthday.DATE_FORMAT
+                )
                 upcoming_birthdays.append(
                     {"name": name, "congratulation_date": congratulation_date_string}
                 )
