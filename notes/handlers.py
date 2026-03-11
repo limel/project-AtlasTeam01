@@ -3,20 +3,20 @@ from decorators import input_error
 from .notes_book import Note, Notes
 
 
-def require_args(args: list[str], count: int) -> None:
+def require_args(args: list[str], count: int, usage: str) -> None:
     if len(args) < count:
-        raise ValueError("Not enough arguments provided")
+        raise ValueError(f"Usage: {usage}")
 
 
 @input_error
 def add_note(args: list[str], notes: Notes) -> str:
-    require_args(args, 2)
+    require_args(args, 2, 'add-note "title" content')
 
     title = args[0]
     content = " ".join(args[1:])
     note = notes.add_note(Note(title=title, content=content))
 
-    # Duplicate titles are suffixed as "title_1", "title_2", and so on.
+    # Titles may be normalized by truncation and duplicate suffixing.
     if note.title != title:
         return f"Note was successfully added as '{note.title}'"
 
@@ -25,29 +25,37 @@ def add_note(args: list[str], notes: Notes) -> str:
 
 @input_error
 def show_note(args: list[str], notes: Notes) -> str:
-    require_args(args, 1)
+    require_args(args, 1, 'find-note "title"')
 
     title = args[0]
     return str(notes.find_note(title))
 
 
 @input_error
-def edit_note(args: list[str], notes: Notes) -> str:
-    require_args(args, 2)
+def edit_note_title(args: list[str], notes: Notes) -> str:
+    require_args(args, 2, 'edit-note-title "title" "new title"')
+
+    title = args[0]
+    new_title = " ".join(args[1:]).strip()
+
+    note = notes.edit_note_title(title, new_title)
+    return f"Note title was successfully updated to '{note.title}'"
+
+
+@input_error
+def edit_note_content(args: list[str], notes: Notes) -> str:
+    require_args(args, 2, 'edit-note "title" new content')
 
     title = args[0]
     new_text = " ".join(args[1:]).strip()
 
-    if not new_text:
-        raise ValueError("Missing new note content")
-
     notes.edit_note(title, new_text)
-    return "Note was successfully updated"
+    return "Note content was successfully updated"
 
 
 @input_error
 def delete_note(args: list[str], notes: Notes) -> str:
-    require_args(args, 1)
+    require_args(args, 1, 'delete-note "title"')
 
     title = args[0]
     notes.delete_note(title)
