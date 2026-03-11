@@ -1,4 +1,4 @@
-from book_serialization import load_data, save_data
+from address_book import AddressBook
 from command_handlers import (
     add_birthday,
     add_contact,
@@ -9,6 +9,9 @@ from command_handlers import (
     show_phone,
 )
 from decorators import input_error
+from store.serializer import pickle_serializer
+
+load_data, save_data = pickle_serializer("book", AddressBook)
 
 
 @input_error
