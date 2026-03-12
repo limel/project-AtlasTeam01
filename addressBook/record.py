@@ -15,16 +15,17 @@ class Record:
             raise ValueError(f"The phone number {new_phone} already exists")
         self.phones.append(Phone(new_phone))
 
-    def remove_phone(self, phone_to_remove: str):
-        phone = next((p for p in self.phones if p.value == phone_to_remove), None)
-        if phone:
-            self.phones.remove(phone)
-
     def edit_phone(self, old_phone: str, new_phone: str):
         phone = next((p for p in self.phones if p.value == old_phone), None)
         if phone:
             index = self.phones.index(phone)
             self.phones[index] = Phone(new_phone)
+
+    def delete_phone(self, phone_to_remove: str):
+        phone = next((p for p in self.phones if p.value == phone_to_remove), None)
+        if not phone:
+            raise ValueError(f"Phone {phone_to_remove} not found")
+        self.phones.remove(phone)
 
     # ---------- EMAIL ----------
     def add_email(self, new_email: str):
@@ -49,11 +50,19 @@ class Record:
     def add_address(self, address: str):
         self.address = Address(address)
 
+    def delete_address(self):
+        if not self.address:
+            raise ValueError("Address not set")
+        self.address = None
+
     # ---------- BIRTHDAY ----------
     def add_birthday(self, date: str):
-        if self.birthday:
-            raise ValueError("Birthday already exists!")
         self.birthday = Birthday(date)
+
+    def delete_birthday(self):
+        if not self.birthday:
+            raise ValueError("Birthday not set")
+        self.birthday = None
 
     # ---------- STR for Record ----------
     def __str__(self):

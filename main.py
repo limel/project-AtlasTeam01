@@ -2,23 +2,26 @@ from book_serialization import load_data, save_data
 
 from addressBook.handlers import (
     add_contact,
-    change_contact,
-    delete_contact,
+    edit_contact,
     find_contact,
+    delete_contact,
     show_phone,
+    delete_phone,
     add_email,
-    show_email,
     edit_email,
+    show_email,
     delete_email,
     add_address,
-    show_address,
     edit_address,
-    show_all,
+    show_address,
+    delete_address,
     add_birthday,
+    edit_birthday,
     show_birthday,
+    delete_birthday,
+    show_all,
     birthdays
 )
-# from addressBook.address_book import AddressBook
 import shlex
 from decorators import input_error
 from notes import Notes, run_notes_menu
@@ -57,7 +60,7 @@ def main() -> None:
             print(add_contact(args, book))
 
         elif command == "change":
-            print(change_contact(args, book))
+            print(edit_contact(args, book))
 
         elif command == "find":
             print(find_contact(args, book))
@@ -67,6 +70,9 @@ def main() -> None:
 
         elif command == "phone":
             print(show_phone(args, book))
+
+        elif command == "delete-phone":
+            print(delete_phone(args, book))
 
         elif command == "add-email":
             print(add_email(args, book))
@@ -89,14 +95,23 @@ def main() -> None:
         elif command == "edit-address":
             print(edit_address(args, book))
 
-        elif command == "all":
-            print(show_all(book))
+        elif command == "delete-address":
+            print(delete_address(args, book))
 
         elif command == "add-birthday":
             print(add_birthday(args, book))
 
+        elif command == "edit-birthday":
+            print(edit_birthday(args, book))
+
         elif command == "show-birthday":
             print(show_birthday(args, book))
+
+        elif command == "delete-birthday":
+            print(delete_birthday(args, book))
+
+        elif command == "all":
+            print(show_all(book))
 
         elif command == "birthdays":
             print(birthdays(book))
