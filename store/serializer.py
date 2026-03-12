@@ -1,19 +1,18 @@
 import pickle
-from collections.abc import Callable
 
 
-def pickle_serializer(filename: str, backup_class: type) -> tuple[Callable, Callable]:
-    pickle_filename = f"{filename}.pkl"
+class PickleSerializer:
+    def __init__(self, filename: str, backup_class: type) -> None:
+        self._filename = f"{filename}.pkl"
+        self._backup_class = backup_class
 
-    def save_data(data):
-        with open(pickle_filename, "wb") as f:
+    def save_data(self, data) -> None:
+        with open(self._filename, "wb") as f:
             pickle.dump(data, f)
 
-    def load_data():
+    def load_data(self):
         try:
-            with open(pickle_filename, "rb") as f:
+            with open(self._filename, "rb") as f:
                 return pickle.load(f)
         except (FileNotFoundError, pickle.UnpicklingError):
-            return backup_class()
-
-    return save_data, load_data
+            return self._backup_class()

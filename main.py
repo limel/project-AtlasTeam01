@@ -10,9 +10,9 @@ from command_handlers import (
 )
 from decorators import input_error
 from notes import Notes, run_notes_menu
-from store.serializer import pickle_serializer
+from store.serializer import PickleSerializer
 
-load_data, save_data = pickle_serializer("book", AddressBook)
+serializer = PickleSerializer("book", AddressBook)
 
 
 @input_error
@@ -23,7 +23,7 @@ def parse_input(user_input):
 
 
 def main() -> None:
-    book = load_data()
+    book = serializer.load_data()
     notes: Notes | None = None
     print("Welcome to the assistant bot!")
     while True:
@@ -31,7 +31,7 @@ def main() -> None:
         command, *args = parse_input(user_input)
 
         if command in ["close", "exit"]:
-            save_data(book)
+            serializer.save_data(book)
             print("Good bye!")
             break
 
