@@ -12,8 +12,6 @@ class Field:
 
 class Name(Field):
     pass
-    # def __init__(self, value):
-    #     self.value = value.strip().title()
 
 
 class Phone(Field):

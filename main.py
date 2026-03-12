@@ -32,6 +32,9 @@ def parse_input(user_input: str):
 
     command, *args = parts
     command = command.strip().lower()
+
+    if args:
+        args[0] = args[0].strip().title()
     return command, *args
 
 def main() -> None:
