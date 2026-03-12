@@ -2,11 +2,17 @@ from book_serialization import load_data, save_data
 from command_handlers import (
     add_birthday,
     add_contact,
+    add_email,
     birthdays,
     change_contact,
     show_all,
     show_birthday,
+    show_email,
     show_phone,
+    delete_contact,
+    find_contact,
+    edit_email,
+    delete_email,
 )
 from decorators import input_error
 
@@ -39,8 +45,26 @@ def main():
         elif command == "change":
             print(change_contact(args, book))
 
+        elif command == "find":
+            print(find_contact(args, book))
+
+        elif command == "delete":
+            print(delete_contact(args, book))
+
         elif command == "phone":
             print(show_phone(args, book))
+
+        elif command == "add-email":
+            print(add_email(args, book))
+
+        elif command == "email":
+            print(show_email(args, book))
+
+        elif command == "edit-email":
+            print(edit_email(args, book))
+
+        elif command == "delete-email":
+            print(delete_email(args, book))
 
         elif command == "all":
             print(show_all(book))
