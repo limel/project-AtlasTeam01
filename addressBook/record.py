@@ -1,5 +1,6 @@
 # addressBook/record.py
-from .fields import Name, Phone, Email, Address, Birthday
+from .fields import Address, Birthday, Email, Name, Phone
+
 
 class Record:
     def __init__(self, name):

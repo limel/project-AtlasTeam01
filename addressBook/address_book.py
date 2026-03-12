@@ -1,8 +1,10 @@
 # addressBook/address_book.py
 from collections import UserDict
 from datetime import datetime, timedelta
-from .record import Record
+
 from .fields import Birthday
+from .record import Record
+
 
 class AddressBook(UserDict):
     def add_record(self, new_record: Record):
@@ -34,6 +36,11 @@ class AddressBook(UserDict):
                 # Adjust if birthday falls on weekend
                 if next_bd.weekday() in [5, 6]:
                     next_bd += timedelta(days=(7 - next_bd.weekday()))
-                upcoming.append({"name": record.name.value, "congratulation_date": next_bd.strftime(Birthday.DATE_FORMAT)})
+                upcoming.append(
+                    {
+                        "name": record.name.value,
+                        "congratulation_date": next_bd.strftime(Birthday.DATE_FORMAT),
+                    }
+                )
 
         return upcoming

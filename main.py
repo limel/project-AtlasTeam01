@@ -1,33 +1,35 @@
-from book_serialization import load_data, save_data
+import shlex
+
 from colorama import Fore, Style, init
 
 from addressBook.handlers import (
-    add_contact,
-    edit_contact,
-    find_contact,
-    delete_contact,
-    show_phone,
-    delete_phone,
-    add_email,
-    edit_email,
-    show_email,
-    delete_email,
     add_address,
-    edit_address,
-    show_address,
-    delete_address,
     add_birthday,
-    edit_birthday,
-    show_birthday,
+    add_contact,
+    add_email,
+    birthdays,
+    delete_address,
     delete_birthday,
+    delete_contact,
+    delete_email,
+    delete_phone,
+    edit_address,
+    edit_birthday,
+    edit_contact,
+    edit_email,
+    find_contact,
+    show_address,
     show_all,
-    birthdays
+    show_birthday,
+    show_email,
+    show_phone,
 )
-import shlex
+from book_serialization import load_data, save_data
 from decorators import input_error
 from notes import Notes, run_notes_menu
 
 init(autoreset=True)
+
 
 @input_error
 def parse_input(user_input: str):
@@ -41,6 +43,7 @@ def parse_input(user_input: str):
     if args:
         args[0] = args[0].strip().title()
     return command, *args
+
 
 def main() -> None:
     book = load_data()

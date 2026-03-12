@@ -2,6 +2,7 @@
 import re
 from datetime import datetime
 
+
 class Field:
     def __init__(self, value):
         self.value = value
@@ -21,7 +22,9 @@ class Phone(Field):
         if not phone.isdigit():
             raise ValueError("Phone number must contain only digits")
         if len(phone) != Phone.REQUIRED_LENGTH:
-            raise ValueError(f"Phone number must be {Phone.REQUIRED_LENGTH} digits long")
+            raise ValueError(
+                f"Phone number must be {Phone.REQUIRED_LENGTH} digits long"
+            )
         self.value = phone
 
 
@@ -37,8 +40,10 @@ class Email(Field):
     def is_valid(cls, email: str) -> bool:
         return re.match(cls.EMAIL_REGEX, email) is not None
 
+
 class Address(Field):
     pass
+
 
 class Birthday(Field):
     DATE_FORMAT = "%d.%m.%Y"

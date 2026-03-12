@@ -1,16 +1,17 @@
 # addressBook/handlers.py
-from decorators import input_error
 from tabulate import tabulate
 
-from .record import Record
+from decorators import input_error
+
 from .address_book import AddressBook
-from .fields import Phone, Email, Birthday
+from .record import Record
 
 
 # --- Внутрішні допоміжні функції ---
 def check_if_args_provided(args: list):
     if not args:
         raise ValueError("No arguments provided")
+
 
 def get_record_or_error(name: str, book: AddressBook) -> Record:
     record = book.find(name)
@@ -40,6 +41,7 @@ def add_contact(args: list, book: AddressBook):
 
     return "Contact already exists"
 
+
 @input_error
 def edit_contact(args: list, book: AddressBook):
     check_if_args_provided(args)
@@ -54,12 +56,14 @@ def edit_contact(args: list, book: AddressBook):
     record.edit_phone(old_phone, new_phone)
     return f"The phone number was successfully updated from {old_phone} to {new_phone}"
 
+
 @input_error
 def find_contact(args: list, book: AddressBook):
     check_if_args_provided(args)
     name, *_ = args
     record = get_record_or_error(name, book)
     return str(record)
+
 
 @input_error
 def delete_contact(args: list, book: AddressBook):
@@ -79,6 +83,7 @@ def show_phone(args: list, book: AddressBook):
     if not record.phones:
         return f"{record.name.value} - No phone numbers yet"
     return f"{record.name.value} - {', '.join(p.value for p in record.phones)}"
+
 
 @input_error
 def delete_phone(args: list, book: AddressBook):
@@ -100,6 +105,7 @@ def add_email(args: list, book: AddressBook):
     record.add_email(email)
     return f"Email {email} added to contact {name}"
 
+
 @input_error
 def edit_email(args: list[str], book: AddressBook):
     check_if_args_provided(args)
@@ -110,6 +116,7 @@ def edit_email(args: list[str], book: AddressBook):
     record.edit_email(old_email, new_email)
     return f"Email updated from {old_email} to {new_email}"
 
+
 @input_error
 def show_email(args: list, book: AddressBook):
     check_if_args_provided(args)
@@ -118,6 +125,7 @@ def show_email(args: list, book: AddressBook):
     if not record.emails:
         return "No emails found"
     return f"{record.name.value} - {', '.join(e.value for e in record.emails)}"
+
 
 @input_error
 def delete_email(args: list[str], book: AddressBook):
@@ -143,6 +151,7 @@ def add_address(args: list, book: AddressBook):
     record.add_address(address)
     return f"Address '{address}' added to contact {name}"
 
+
 @input_error
 def edit_address(args: list, book: AddressBook):
     check_if_args_provided(args)
@@ -153,6 +162,7 @@ def edit_address(args: list, book: AddressBook):
     record.add_address(new_address)
     return f"Address for {name} updated to '{new_address}'"
 
+
 @input_error
 def show_address(args: list, book: AddressBook):
     check_if_args_provided(args)
@@ -161,6 +171,7 @@ def show_address(args: list, book: AddressBook):
     if not record.address:
         return f"{name} - Address not set"
     return f"{name} - {record.address.value}"
+
 
 @input_error
 def delete_address(args: list, book: AddressBook):
@@ -178,12 +189,12 @@ def add_birthday(args: list, book: AddressBook):
     name, birthday = args
     record = get_record_or_error(name, book)
 
-
     if record.birthday is not None:
         return f"Birthday already exists for contact {name}"
 
     record.add_birthday(birthday)
     return "Birthday has been successfully added"
+
 
 @input_error
 def edit_birthday(args: list, book: AddressBook):
@@ -195,6 +206,7 @@ def edit_birthday(args: list, book: AddressBook):
     record.add_birthday(new_birthday)
     return f"Birthday for {name} updated to {new_birthday}"
 
+
 @input_error
 def show_birthday(args: list, book: AddressBook):
     name, *_ = args
@@ -202,6 +214,7 @@ def show_birthday(args: list, book: AddressBook):
     if not record.birthday:
         return f"{name} - Birthday not set"
     return str(record.birthday)
+
 
 @input_error
 def delete_birthday(args: list, book: AddressBook):
@@ -220,28 +233,29 @@ def show_all(book: AddressBook):
     rows = []
 
     for record in book.values():
-        phones = "\n".join(p.value for p in record.phones) if record.phones else "- empty"
-        emails = "\n".join(e.value for e in record.emails) if record.emails else "- empty"
+        phones = (
+            "\n".join(p.value for p in record.phones) if record.phones else "- empty"
+        )
+        emails = (
+            "\n".join(e.value for e in record.emails) if record.emails else "- empty"
+        )
         birthday = str(record.birthday) if record.birthday else "- empty"
         address = record.address.value if record.address else "- empty"
 
-        rows.append([
-            record.name.value,
-            phones,
-            emails,
-            birthday,
-            address
-        ])
+        rows.append([record.name.value, phones, emails, birthday, address])
 
     return tabulate(
         rows,
         headers=["Name", "Phones", "Emails", "Birthday", "Address"],
-        tablefmt="grid"
+        tablefmt="grid",
     )
+
 
 @input_error
 def birthdays(book: AddressBook):
     upcoming_birthdays = book.get_upcoming_birthdays()
     if not upcoming_birthdays:
         return "- empty"
-    return "\n".join(f"{bd['name']} - {bd['congratulation_date']}" for bd in upcoming_birthdays)
+    return "\n".join(
+        f"{bd['name']} - {bd['congratulation_date']}" for bd in upcoming_birthdays
+    )
