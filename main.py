@@ -1,29 +1,38 @@
 from book_serialization import load_data, save_data
-from command_handlers import (
-    add_birthday,
+
+from addressBook.handlers import (
     add_contact,
-    add_email,
-    birthdays,
     change_contact,
-    show_all,
-    show_birthday,
-    show_email,
-    show_phone,
     delete_contact,
     find_contact,
+    show_phone,
+    add_email,
+    show_email,
     edit_email,
     delete_email,
+    add_address,
+    show_address,
+    edit_address,
+    show_all,
+    add_birthday,
+    show_birthday,
+    birthdays
 )
+# from addressBook.address_book import AddressBook
+import shlex
 from decorators import input_error
 from notes import Notes, run_notes_menu
 
 
 @input_error
-def parse_input(user_input):
-    cmd, *args = user_input.split()
-    cmd = cmd.strip().lower()
-    return cmd, *args
+def parse_input(user_input: str):
+    parts = shlex.split(user_input)
+    if not parts:
+        return ("",)
 
+    command, *args = parts
+    command = command.strip().lower()
+    return command, *args
 
 def main() -> None:
     book = load_data()
@@ -67,6 +76,15 @@ def main() -> None:
 
         elif command == "delete-email":
             print(delete_email(args, book))
+
+        elif command == "add-address":
+            print(add_address(args, book))
+
+        elif command == "show-address":
+            print(show_address(args, book))
+
+        elif command == "edit-address":
+            print(edit_address(args, book))
 
         elif command == "all":
             print(show_all(book))
