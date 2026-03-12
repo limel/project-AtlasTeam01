@@ -1,4 +1,5 @@
 from book_serialization import load_data, save_data
+from colorama import Fore, Style, init
 
 from addressBook.handlers import (
     add_contact,
@@ -26,6 +27,7 @@ import shlex
 from decorators import input_error
 from notes import Notes, run_notes_menu
 
+init(autoreset=True)
 
 @input_error
 def parse_input(user_input: str):
@@ -43,9 +45,19 @@ def parse_input(user_input: str):
 def main() -> None:
     book = load_data()
     notes: Notes | None = None
-    print("Welcome to the assistant bot!")
+
+    print(Fore.CYAN + Style.BRIGHT + "Welcome to the assistant bot!")
+    print(
+        Fore.YELLOW
+        + "Commands: add, change, find, delete, phone, add-email, add-address,\n"
+        + "add-birthday, birthdays, all, notes, exit"
+    )
+
     while True:
-        user_input = input("Enter a command: ")
+        user_input = input(
+            Fore.GREEN + Style.BRIGHT + "Enter a command: " + Style.RESET_ALL
+        )
+
         command, *args = parse_input(user_input)
 
         if command in ["close", "exit"]:

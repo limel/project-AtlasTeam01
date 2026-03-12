@@ -1,15 +1,16 @@
 # addressBook/handlers.py
 from decorators import input_error
+from tabulate import tabulate
 
 from .record import Record
 from .address_book import AddressBook
 from .fields import Phone, Email, Birthday
 
+
 # --- Внутрішні допоміжні функції ---
 def check_if_args_provided(args: list):
     if not args:
         raise ValueError("No arguments provided")
-
 
 def get_record_or_error(name: str, book: AddressBook) -> Record:
     record = book.find(name)
@@ -212,11 +213,31 @@ def delete_birthday(args: list, book: AddressBook):
     record.delete_birthday()
     return f"Birthday removed for contact {name}"
 
+
 # --- GENERAL HANDLERS ---
 @input_error
 def show_all(book: AddressBook):
-    records = [str(r) for r in book.values()]
-    return "\n".join(records)
+    rows = []
+
+    for record in book.values():
+        phones = "\n".join(p.value for p in record.phones) if record.phones else "- empty"
+        emails = "\n".join(e.value for e in record.emails) if record.emails else "- empty"
+        birthday = str(record.birthday) if record.birthday else "- empty"
+        address = record.address.value if record.address else "- empty"
+
+        rows.append([
+            record.name.value,
+            phones,
+            emails,
+            birthday,
+            address
+        ])
+
+    return tabulate(
+        rows,
+        headers=["Name", "Phones", "Emails", "Birthday", "Address"],
+        tablefmt="grid"
+    )
 
 @input_error
 def birthdays(book: AddressBook):

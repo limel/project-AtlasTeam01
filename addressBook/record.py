@@ -66,8 +66,14 @@ class Record:
 
     # ---------- STR for Record ----------
     def __str__(self):
-        phones = "; ".join(p.value for p in self.phones) if self.phones else "- empty"
-        emails = "; ".join(e.value for e in self.emails) if self.emails else "- empty"
+        phones = ", ".join(p.value for p in self.phones) if self.phones else "- empty"
+        emails = ", ".join(e.value for e in self.emails) if self.emails else "- empty"
         birthday = str(self.birthday) if self.birthday else "- empty"
         address = self.address.value if self.address else "- empty"
-        return f"Name: {self.name.value}, Phones: {phones}, Emails: {emails}, Birthday: {birthday}, Address: {address}"
+        return (
+            f"Name: {self.name.value}\n"
+            f"Phones: {phones}\n"
+            f"Emails: {emails}\n"
+            f"Birthday: {birthday}\n"
+            f"Address: {address}"
+        )
