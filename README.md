@@ -53,6 +53,8 @@ find-note "title"
 edit-note-title "title" new title
 edit-note "title" new content
 delete-note "title"
+add-tag "title" tag [tag ...]
+find-by-tag tag [tag ...]
 all-notes
 back
 ```
@@ -64,6 +66,13 @@ add-note "Project plan" finish database schema
 find-note "Project plan"
 edit-note-title "Project plan" "Project plan v2"
 edit-note "Project plan v2" update API section
+
+add-tag "Project plan v2" task urgent
+add-tag "Project plan v2" #important
+
+find-by-tag task
+find-by-tag #urgent
+
 delete-note "Project plan v2"
 ```
 
@@ -73,6 +82,7 @@ Notes behavior:
 - Title matching is case-insensitive.
 - Long titles are truncated to 80 characters.
 - Duplicate titles receive a suffix like `(1)`.
+- Tags are case-insensitive and duplicates are ignored.
 
 ## Git ignore
 

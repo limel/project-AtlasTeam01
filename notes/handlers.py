@@ -62,5 +62,22 @@ def delete_note(args: list[str], notes: Notes) -> str:
     return "Note was successfully deleted"
 
 
+@input_error
+def add_tag_to_note(args: list[str], notes: Notes) -> str:
+    require_args(args, 2, 'add-tag "title" tag [tag ...]')
+
+    title = args[0]
+    tags = args[1:]
+    note = notes.add_tag(title, tags)
+    return f"Tags were successfully added to '{note.title}'"
+
+
+@input_error
+def get_notes_sorted_by_tag(args: list[str], notes: Notes) -> str:
+    require_args(args, 1, "find-by-tag tag [tag ...]")
+
+    return notes.format_notes(notes.sort_by_tag(args))
+
+
 def show_all_notes(notes: Notes) -> str:
     return str(notes)
