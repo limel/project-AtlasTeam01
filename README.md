@@ -31,6 +31,49 @@ ruff check . --fix
 black .
 ```
 
+## Notes commands
+
+Start the assistant bot from the repository root:
+
+```bash
+python main.py
+```
+
+Enter the notes menu with:
+
+```text
+notes
+```
+
+Available notes commands:
+
+```text
+add-note "title" content
+find-note "title"
+edit-note-title "title" new title
+edit-note "title" new content
+delete-note "title"
+all-notes
+back
+```
+
+Examples:
+
+```text
+add-note "Project plan" finish database schema
+find-note "Project plan"
+edit-note-title "Project plan" "Project plan v2"
+edit-note "Project plan v2" update API section
+delete-note "Project plan v2"
+```
+
+Notes behavior:
+
+- Titles can contain multiple words.
+- Title matching is case-insensitive.
+- Long titles are truncated to 80 characters.
+- Duplicate titles receive a suffix like `(1)`.
+
 ## Git ignore
 
 The `.gitignore` file excludes local virtual environments, Python cache files, and tool caches so each team member can work locally without committing machine-specific files.

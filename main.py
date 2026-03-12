@@ -15,6 +15,7 @@ from command_handlers import (
     delete_email,
 )
 from decorators import input_error
+from notes import Notes, run_notes_menu
 
 
 @input_error
@@ -24,8 +25,9 @@ def parse_input(user_input):
     return cmd, *args
 
 
-def main():
+def main() -> None:
     book = load_data()
+    notes: Notes | None = None
     print("Welcome to the assistant bot!")
     while True:
         user_input = input("Enter a command: ")
@@ -77,6 +79,13 @@ def main():
 
         elif command == "birthdays":
             print(birthdays(book))
+
+        # TODO: add correct command in integration task
+        elif command == "notes":
+            if notes is None:
+                notes = Notes()
+
+            run_notes_menu(notes)
 
         else:
             print("Invalid command.")
