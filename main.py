@@ -36,8 +36,6 @@ def main() -> None:
         if command == "contacts":
             run_contacts_menu(book)
         elif command == "notes":
-            if notes is None:
-                notes = Notes()
             run_notes_menu(notes)
 
 
