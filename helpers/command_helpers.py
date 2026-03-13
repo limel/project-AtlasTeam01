@@ -1,0 +1,39 @@
+import questionary
+
+
+def ask_text(prompt: str, required: bool = True, default: str = "") -> str:
+    value = questionary.text(prompt, default=default).ask()
+    if value is None:
+        raise KeyboardInterrupt
+    value = value.strip()
+    if required and not value:
+        raise ValueError(f"{prompt.rstrip(': ')} cannot be empty")
+    return value
+
+
+def ask_select(items: list[str], prompt: str, empty_msg: str) -> str:
+    if not items:
+        raise ValueError(empty_msg)
+    if len(items) == 1:
+        return items[0]
+    value = questionary.select(prompt, choices=items).ask()
+    if value is None:
+        raise KeyboardInterrupt
+    return value
+
+
+def ask_contact(book, prompt: str = "Select contact:"):
+    names = list(book.data.keys())
+    name = ask_select(names, prompt, "No contacts yet")
+    return book.find(name)
+
+
+def get_note_titles(notes) -> list[str]:
+    return [note.title for note in notes._notes.values()]
+
+
+def ask_title(notes, prompt: str = "Select note:") -> str:
+    titles = get_note_titles(notes)
+    if not titles:
+        raise ValueError("You have no notes yet")
+    return questionary.select(prompt, choices=titles).ask()
