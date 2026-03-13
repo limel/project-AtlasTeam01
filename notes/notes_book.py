@@ -121,6 +121,10 @@ class Notes:
         self._notes: dict[int, Note] = {}
         self._next_id = 1
 
+    @property
+    def titles(self) -> list[str]:
+        return [note.title for note in self._notes.values()]
+
     @staticmethod
     def _normalize_title_key(title: str) -> str:
         return title.strip().casefold()

@@ -27,14 +27,9 @@ def ask_contact(book, prompt: str = "Select contact:"):
     name = ask_select(names, prompt, "No contacts yet")
     return book.find(name)
 
-
-def get_note_titles(notes) -> list[str]:
-    # Derive note titles from the public iterable interface of `notes`
-    return [note.title for note in notes]
-
-
 def ask_title(notes, prompt: str = "Select note:") -> str:
-    titles = get_note_titles(notes)
+    titles = notes.titles
+
     if not titles:
         raise ValueError("You have no notes yet")
     value = questionary.select(prompt, choices=titles).ask()
