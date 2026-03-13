@@ -29,7 +29,8 @@ def ask_contact(book, prompt: str = "Select contact:"):
 
 
 def get_note_titles(notes) -> list[str]:
-    return [note.title for note in notes._notes.values()]
+    # Derive note titles from the public iterable interface of `notes`
+    return [note.title for note in notes]
 
 
 def ask_title(notes, prompt: str = "Select note:") -> str:
