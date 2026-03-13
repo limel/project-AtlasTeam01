@@ -4,7 +4,7 @@ import questionary
 def ask_text(prompt: str, required: bool = True, default: str = "") -> str:
     value = questionary.text(prompt, default=default).ask()
     if value is None:
-        raise KeyboardInterrupt
+        raise ValueError("Input cancelled by user")
     value = value.strip()
     if required and not value:
         raise ValueError(f"{prompt.rstrip(': ')} cannot be empty")
@@ -18,7 +18,7 @@ def ask_select(items: list[str], prompt: str, empty_msg: str) -> str:
         return items[0]
     value = questionary.select(prompt, choices=items).ask()
     if value is None:
-        raise KeyboardInterrupt
+        raise ValueError("Selection cancelled by user")
     return value
 
 
@@ -36,4 +36,7 @@ def ask_title(notes, prompt: str = "Select note:") -> str:
     titles = get_note_titles(notes)
     if not titles:
         raise ValueError("You have no notes yet")
-    return questionary.select(prompt, choices=titles).ask()
+    value = questionary.select(prompt, choices=titles).ask()
+    if value is None:
+        raise ValueError("Selection cancelled by user")
+    return value
