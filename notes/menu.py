@@ -4,9 +4,11 @@ from colorama import Fore, Style, init
 
 from .handlers import (
     add_note,
+    add_tag_to_note,
     delete_note,
     edit_note_content,
     edit_note_title,
+    get_notes_sorted_by_tag,
     show_all_notes,
     show_note,
 )
@@ -36,7 +38,7 @@ def run_notes_menu(notes: Notes) -> None:
     print(
         Fore.YELLOW
         + "Commands: add-note, find-note, edit-note-title, "
-        + "edit-note, delete-note, all-notes"
+        + "edit-note, delete-note, add-tag, find-by-tag, all-notes"
     )
 
     while True:
@@ -68,6 +70,10 @@ def run_notes_menu(notes: Notes) -> None:
             print(edit_note_content(args, notes))
         elif command == "delete-note":
             print(delete_note(args, notes))
+        elif command == "add-tag":
+            print(add_tag_to_note(args, notes))
+        elif command == "find-by-tag":
+            print(get_notes_sorted_by_tag(args, notes))
         elif command == "all-notes":
             print(show_all_notes(notes))
         else:
