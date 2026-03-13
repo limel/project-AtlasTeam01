@@ -18,11 +18,16 @@ class Name(Field):
 class Phone(Field):
     PHONE_NUMBER_REGEX = r"^\+?\d[\d\s-]{8,14}\d$"
 
-    def __init__(self, phone):
+    @staticmethod
+    def normalize(phone: str) -> str:
+        """Return a normalized phone number with spaces and hyphens removed."""
+        return re.sub(r"[\s-]", "", phone)
+
+    def __init__(self, phone: str):
         if not re.match(Phone.PHONE_NUMBER_REGEX, phone):
             raise ValueError("Invalid phone number format")
-        normalized_phone = re.sub(r"[\s-]", "", phone)
-        self.value = normalized_phone
+        normalized_phone = Phone.normalize(phone)
+        super().__init__(normalized_phone)
 
 
 class Email(Field):
