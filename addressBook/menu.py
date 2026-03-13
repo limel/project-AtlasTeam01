@@ -1,10 +1,57 @@
-# addressBook/menu.py
 import questionary
 
 from decorators import input_error
 
 from helpers.command_helpers import ask_select, ask_text
+from .address_book import AddressBook
 from .record import Record
+
+CONTACTS_MENU_CHOICES = [
+    questionary.Choice("Add contact", value="add"),
+    questionary.Choice("Edit contact", value="edit"),
+    questionary.Choice("Delete contact", value="delete"),
+    questionary.Choice("Show all contacts", value="all"),
+    questionary.Choice("Upcoming birthdays", value="birthdays"),
+    questionary.Separator(),
+    questionary.Choice("Back to main menu", value="back"),
+]
+
+CONTACTS_INSTRUCTIONS = """
+Available commands:
+  Add contact          - Create a new contact
+  Edit contact         - Edit an existing contact's details
+  Delete contact       - Remove a contact
+  Show all contacts    - Display all saved contacts
+  Upcoming birthdays   - Show birthdays in the next 7 days
+"""
+
+
+def run_contacts_menu(book: AddressBook) -> None:
+    from .handlers import add_contact, birthdays, delete_contact, edit_contact, show_all
+
+    handlers = {
+        "add": add_contact,
+        "edit": edit_contact,
+        "delete": delete_contact,
+        "all": show_all,
+        "birthdays": birthdays,
+    }
+
+    print(CONTACTS_INSTRUCTIONS)
+    command = None
+    while command != "back":
+        command = questionary.select(
+            "Contacts menu:",
+            choices=CONTACTS_MENU_CHOICES,
+        ).ask()
+
+        if command is None:
+            break
+
+        handler = handlers.get(command)
+        if handler:
+            print(handler(book))
+
 
 EDIT_MENU_CHOICES = [
     questionary.Choice("Add phone", value="add-phone"),

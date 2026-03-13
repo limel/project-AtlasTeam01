@@ -37,7 +37,21 @@ HANDLERS = {
 }
 
 
+NOTES_INSTRUCTIONS = """
+Available commands:
+  Add note            - Create a new note
+  Find note           - Search for a note by title
+  Edit title          - Rename a note
+  Edit content        - Change note content
+  Delete note         - Remove a note
+  Add tag to note     - Add tags to an existing note
+  Sort by tag         - Find notes by tags
+  All notes           - Show all notes
+"""
+
+
 def run_notes_menu(notes: Notes) -> None:
+    print(NOTES_INSTRUCTIONS)
     command = None
     while command != "back":
         command = questionary.select(
