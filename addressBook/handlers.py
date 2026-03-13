@@ -9,6 +9,7 @@ from .menu import run_edit_menu
 from .record import Record
 from helpers.command_helpers import ask_contact, ask_text
 
+
 @input_error
 def add_contact(book: AddressBook) -> str:
     name = ask_text("Contact name: ")

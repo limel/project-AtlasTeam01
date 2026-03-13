@@ -1,5 +1,7 @@
 import questionary
 
+from addressBook.address_book import AddressBook
+
 from addressBook.handlers import (
     add_contact,
     birthdays,
@@ -7,8 +9,11 @@ from addressBook.handlers import (
     edit_contact,
     show_all,
 )
-from book_serialization import load_data, save_data
 from notes import Notes, run_notes_menu
+from store.serializer import PickleSerializer
+
+book_serializer = PickleSerializer("address_book", AddressBook)
+notes_serializer = PickleSerializer("notes", Notes)
 
 MAIN_MENU_CHOICES = [
     questionary.Choice("Add contact", value="add"),
@@ -31,8 +36,8 @@ HANDLERS = {
 
 
 def main() -> None:
-    book = load_data()
-    notes: Notes | None = None
+    book = book_serializer.load_data()
+    notes = notes_serializer.load_data()
     print("Welcome to the assistant bot!")
 
     while True:
@@ -42,7 +47,8 @@ def main() -> None:
         ).ask()
 
         if command is None or command == "exit":
-            save_data(book)
+            book_serializer.save_data(book)
+            notes_serializer.save_data(notes)
             print("Good bye!")
             break
 

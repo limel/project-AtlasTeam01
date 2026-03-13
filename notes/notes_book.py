@@ -6,10 +6,17 @@ from tabulate import tabulate
 class Note:
     MAX_TITLE_LENGTH = 80
 
-    def __init__(self, title: str, content: str, note_id: int | None = None) -> None:
+    def __init__(
+        self,
+        title: str,
+        content: str,
+        note_id: int | None = None,
+        tags: list[str] | None = None,
+    ) -> None:
         self.note_id = note_id
         self.title = self._normalize_title(title)
         self.content = content.strip()
+        self.tags = self._normalize_tags(tags or [])
         self.created_at = datetime.now()
         self.updated_at = self.created_at
 
@@ -33,6 +40,25 @@ class Note:
     def _normalize_title(cls, title: str) -> str:
         return title.strip()[: cls.MAX_TITLE_LENGTH].rstrip()
 
+    @staticmethod
+    def _normalize_tags(tags: list[str]) -> list[str]:
+        # Use a list for order and a set for uniqueness.
+        normalized_tags: list[str] = []
+        unique_tags: set[str] = set()
+
+        for tag in tags:
+            normalized_tag = tag.strip().casefold()
+            if not normalized_tag or normalized_tag in unique_tags:
+                continue
+
+            if not Note._contains_text(normalized_tag):
+                raise ValueError("Tag cannot contain only symbols")
+
+            unique_tags.add(normalized_tag)
+            normalized_tags.append(normalized_tag)
+
+        return normalized_tags
+
     def update_title(self, new_title: str) -> None:
         title = self._normalize_title(new_title)
         if not title:
@@ -55,24 +81,40 @@ class Note:
         self.content = content
         self.updated_at = datetime.now()
 
+    def add_tags(self, tags: list[str]) -> None:
+        new_tags = self._normalize_tags(tags)
+        if not new_tags:
+            raise ValueError("At least one valid tag must be provided")
+
+        existing_tags = self.tags
+        tags_to_add = [tag for tag in new_tags if tag not in existing_tags]
+
+        if not tags_to_add:
+            raise ValueError("All provided tags already exist in this note")
+
+        self.tags.extend(tags_to_add)
+        self.updated_at = datetime.now()
+
     def __str__(self) -> str:
         return tabulate(
             [
                 [
                     self.title,
+                    ", ".join(self.tags) if self.tags else "-",
                     self.created_at.strftime("%d.%m.%Y %H:%M"),
                     self.updated_at.strftime("%d.%m.%Y %H:%M"),
                     self.content,
                 ]
             ],
-            headers=["Title", "Created", "Updated", "Content"],
+            headers=["Title", "Tags", "Created", "Updated", "Content"],
             tablefmt="grid",
-            maxcolwidths=[20, None, None, 50],
+            maxcolwidths=[20, 20, None, None, 50],
         )
 
 
 class Notes:
     TITLE_COLUMN_WIDTH = 20
+    TAGS_COLUMN_WIDTH = 20
     CONTENT_COLUMN_WIDTH = 50
 
     def __init__(self) -> None:
@@ -145,6 +187,61 @@ class Notes:
         del self._notes[note.note_id]
         return note
 
+    @staticmethod
+    def _parse_tags(tags: list[str]) -> list[str]:
+        parsed_tags: list[str] = []
+
+        for tag in tags:
+            parsed_tags.extend(part.strip().lstrip("#") for part in tag.split(","))
+
+        return parsed_tags
+
+    def add_tag(self, title: str, tags: list[str]) -> Note:
+        note = self.find_note(title)
+        note.add_tags(self._parse_tags(tags))
+        return note
+
+    def sort_by_tag(self, tags: list[str]) -> list[Note]:
+        normalized_tags = Note._normalize_tags(self._parse_tags(tags))
+        if not normalized_tags:
+            raise ValueError("At least one valid tag must be provided")
+
+        matching_notes = [
+            note
+            for note in self._notes.values()
+            if all(tag in note.tags for tag in normalized_tags)
+        ]
+
+        return sorted(matching_notes, key=lambda note: note.title.casefold())
+
+    def format_notes(self, notes: list[Note]) -> str:
+        if not notes:
+            return "No notes found for the provided tag filters."
+
+        rows = [
+            [
+                note.title,
+                ", ".join(note.tags) if note.tags else "-",
+                note.created_at.strftime("%d.%m.%Y %H:%M"),
+                note.updated_at.strftime("%d.%m.%Y %H:%M"),
+                note.content,
+            ]
+            for note in notes
+        ]
+
+        return tabulate(
+            rows,
+            headers=["Title", "Tags", "Created", "Updated", "Content"],
+            tablefmt="grid",
+            maxcolwidths=[
+                self.TITLE_COLUMN_WIDTH,
+                self.TAGS_COLUMN_WIDTH,
+                None,
+                None,
+                self.CONTENT_COLUMN_WIDTH,
+            ],
+        )
+
     def __str__(self) -> str:
         if not self._notes:
             return (
@@ -152,24 +249,4 @@ class Notes:
                 "Use 'add-note' command to create your first note."
             )
 
-        rows = [
-            [
-                note.title,
-                note.created_at.strftime("%d.%m.%Y %H:%M"),
-                note.updated_at.strftime("%d.%m.%Y %H:%M"),
-                note.content,
-            ]
-            for note in self._notes.values()
-        ]
-
-        return tabulate(
-            rows,
-            headers=["Title", "Created", "Updated", "Content"],
-            tablefmt="grid",
-            maxcolwidths=[
-                self.TITLE_COLUMN_WIDTH,
-                None,
-                None,
-                self.CONTENT_COLUMN_WIDTH,
-            ],
-        )
+        return self.format_notes(list(self._notes.values()))

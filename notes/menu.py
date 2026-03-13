@@ -2,9 +2,11 @@ import questionary
 
 from .handlers import (
     add_note,
+    add_tag_to_note,
     delete_note,
     edit_note_content,
     edit_note_title,
+    get_notes_sorted_by_tag,
     show_all_notes,
     show_note,
 )
@@ -16,6 +18,8 @@ NOTES_MENU_CHOICES = [
     questionary.Choice("Edit title", value="edit-note-title"),
     questionary.Choice("Edit content", value="edit-note"),
     questionary.Choice("Delete note", value="delete-note"),
+    questionary.Choice("Get notes sorted by tag", value="get-notes-sorted-by-tag"),
+    questionary.Choice("Add tag to note", value="add-tag-to-note"),
     questionary.Choice("All notes", value="all-notes"),
     questionary.Separator(),
     questionary.Choice("Back to main menu", value="back"),
@@ -24,6 +28,8 @@ NOTES_MENU_CHOICES = [
 HANDLERS = {
     "add-note": add_note,
     "find-note": show_note,
+    "get-notes-sorted-by-tag": get_notes_sorted_by_tag,
+    "add-tag-to-note": add_tag_to_note,
     "edit-note-title": edit_note_title,
     "edit-note": edit_note_content,
     "delete-note": delete_note,

@@ -57,5 +57,21 @@ def delete_note(notes: Notes) -> str:
     return "Note was successfully deleted"
 
 
+@input_error
+def add_tag_to_note(notes: Notes) -> str:
+    title = ask_title(notes, "Which note to tag?")
+    tags_input = ask_text("Tags (space-separated): ")
+    tags = tags_input.split()
+    note = notes.add_tag(title, tags)
+    return f"Tags were successfully added to '{note.title}'"
+
+
+@input_error
+def get_notes_sorted_by_tag(notes: Notes) -> str:
+    tags_input = ask_text("Tags to search (space-separated): ")
+    tags = tags_input.split()
+    return notes.format_notes(notes.sort_by_tag(tags))
+
+
 def show_all_notes(notes: Notes) -> str:
     return str(notes)
