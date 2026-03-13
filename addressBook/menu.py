@@ -1,8 +1,8 @@
 import questionary
 
 from decorators import input_error
-
 from helpers.command_helpers import ask_select, ask_text
+
 from .address_book import AddressBook
 from .record import Record
 

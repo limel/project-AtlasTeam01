@@ -1,9 +1,10 @@
 import questionary
 
 from decorators import input_error
+from helpers.command_helpers import ask_text, ask_title
 
 from .notes_book import Note, Notes
-from helpers.command_helpers import ask_text, ask_title
+
 
 @input_error
 def add_note(notes: Notes) -> str:

@@ -27,6 +27,7 @@ def ask_contact(book, prompt: str = "Select contact:"):
     name = ask_select(names, prompt, "No contacts yet")
     return book.find(name)
 
+
 def ask_title(notes, prompt: str = "Select note:") -> str:
     titles = notes.titles
 
