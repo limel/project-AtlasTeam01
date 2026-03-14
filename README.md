@@ -1,37 +1,5 @@
 # Atlas team project - 01
 
-## Development setup
-
-Create and activate a virtual environment:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-Install project dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Install the project itself as a package:
-
-```bash
-pip install .
-```
-
-The shared formatting and linting configuration is stored in `pyproject.toml`.
-
-Run the tools from the repository root:
-
-```bash
-ruff check .
-black .
-```
-
-# Atlas team project - 01
-
 ---
 
 ## For Users
@@ -140,10 +108,6 @@ back
 2. Install dependencies:
    ```bash
    pip install -r requirements.txt
-   ```
-3. Install the project as a package:
-   ```bash
-   pip install .
    ```
 
 ### Formatting & Linting
