@@ -18,12 +18,11 @@ class Name(Field):
 
 
 class Phone(Field):
-    DEFAULT_COUNTRY = "UA"  # Україна
+    DEFAULT_COUNTRY = "UA"
 
     def __init__(self, phone: str):
-        phone = phone.strip().replace(" ", "").replace("-", "")  # видаляємо пробіли та дефіси
+        phone = phone.strip().replace(" ", "").replace("-", "")
         if not phone.startswith("+"):
-            # додаємо код України, якщо користувач ввів короткий номер
             if len(phone) == 9:  # мобільний без коду (наприклад, 673000888)
                 phone = "+380" + phone
 
