@@ -1,9 +1,14 @@
 import pickle
+from pathlib import Path
+
+DATA_DIR = Path("data")
 
 
 class PickleSerializer:
+    DATA_DIR.mkdir(exist_ok=True)
+
     def __init__(self, filename: str, backup_class: type) -> None:
-        self._filename = f"{filename}.pkl"
+        self._filename = DATA_DIR / f"{filename}.pkl"
         self._backup_class = backup_class
 
     def save_data(self, data) -> None:

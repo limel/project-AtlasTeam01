@@ -16,16 +16,18 @@ class Name(Field):
 
 
 class Phone(Field):
-    REQUIRED_LENGTH = 10
+    PHONE_NUMBER_REGEX = r"^\+?\d[\d\s-]{8,14}\d$"
 
-    def __init__(self, phone):
-        if not phone.isdigit():
-            raise ValueError("Phone number must contain only digits")
-        if len(phone) != Phone.REQUIRED_LENGTH:
-            raise ValueError(
-                f"Phone number must be {Phone.REQUIRED_LENGTH} digits long"
-            )
-        self.value = phone
+    @staticmethod
+    def normalize(phone: str) -> str:
+        """Return a normalized phone number with spaces and hyphens removed."""
+        return re.sub(r"[\s-]", "", phone)
+
+    def __init__(self, phone: str):
+        if not re.match(Phone.PHONE_NUMBER_REGEX, phone):
+            raise ValueError("Invalid phone number format")
+        normalized_phone = Phone.normalize(phone)
+        super().__init__(normalized_phone)
 
 
 class Email(Field):

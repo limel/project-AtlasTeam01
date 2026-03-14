@@ -1,6 +1,4 @@
-import shlex
-
-from colorama import Fore, Style, init
+import questionary
 
 from .handlers import (
     add_note,
@@ -14,67 +12,56 @@ from .handlers import (
 )
 from .notes_book import Notes
 
-init(autoreset=True)
+NOTES_MENU_CHOICES = [
+    questionary.Choice("Add note", value="add-note"),
+    questionary.Choice("Find note", value="find-note"),
+    questionary.Choice("Edit title", value="edit-note-title"),
+    questionary.Choice("Edit content", value="edit-note"),
+    questionary.Choice("Delete note", value="delete-note"),
+    questionary.Choice("Get notes sorted by tag", value="get-notes-sorted-by-tag"),
+    questionary.Choice("Add tag to note", value="add-tag-to-note"),
+    questionary.Choice("All notes", value="all-notes"),
+    questionary.Separator(),
+    questionary.Choice("Back to main menu", value="back"),
+]
+
+HANDLERS = {
+    "add-note": add_note,
+    "find-note": show_note,
+    "get-notes-sorted-by-tag": get_notes_sorted_by_tag,
+    "add-tag-to-note": add_tag_to_note,
+    "edit-note-title": edit_note_title,
+    "edit-note": edit_note_content,
+    "delete-note": delete_note,
+    "all-notes": show_all_notes,
+}
 
 
-def parse_notes_input(user_input: str) -> tuple[str, ...]:
-    """
-    Splits user input into command and arguments.
-    Returns (command, *args). For empty input returns ("",).
-    """
-
-    parts = shlex.split(user_input)
-    if not parts:
-        return ("",)
-
-    command, *args = parts
-    command = command.strip().lower()
-    return command, *args
+NOTES_INSTRUCTIONS = """
+Available commands:
+  Add note            - Create a new note
+  Find note           - Search for a note by title
+  Edit title          - Rename a note
+  Edit content        - Change note content
+  Delete note         - Remove a note
+  Add tag to note     - Add tags to an existing note
+  Sort by tag         - Find notes by tags
+  All notes           - Show all notes
+"""
 
 
 def run_notes_menu(notes: Notes) -> None:
-    print(Fore.CYAN + Style.BRIGHT + "Welcome to the Notes menu!")
-    # TODO: add exit instruction in integration task
-    print(
-        Fore.YELLOW
-        + "Commands: add-note, find-note, edit-note-title, "
-        + "edit-note, delete-note, add-tag, find-by-tag, all-notes"
-    )
+    print(NOTES_INSTRUCTIONS)
+    command = None
+    while command != "back":
+        command = questionary.select(
+            "Notes menu:",
+            choices=NOTES_MENU_CHOICES,
+        ).ask()
 
-    while True:
-        user_input = input(
-            Fore.GREEN + Style.BRIGHT + "Notes command: " + Style.RESET_ALL
-        )
-        try:
-            command, *args = parse_notes_input(user_input)
-        except ValueError:
-            print("Invalid notes command. Check paired quotes in the title.")
-            continue
-
-        if not command:
-            print("Enter a notes command.")
-            continue
-
-        # TODO: check "back" command in integration task
-        if command in ("back", "exit", "close"):
-            print("Exiting Notes menu.")
+        if command is None:
             break
 
-        if command == "add-note":
-            print(add_note(args, notes))
-        elif command == "find-note":
-            print(show_note(args, notes))
-        elif command == "edit-note-title":
-            print(edit_note_title(args, notes))
-        elif command == "edit-note":
-            print(edit_note_content(args, notes))
-        elif command == "delete-note":
-            print(delete_note(args, notes))
-        elif command == "add-tag":
-            print(add_tag_to_note(args, notes))
-        elif command == "find-by-tag":
-            print(get_notes_sorted_by_tag(args, notes))
-        elif command == "all-notes":
-            print(show_all_notes(notes))
-        else:
-            print("Invalid notes command.")
+        handler = HANDLERS.get(command)
+        if handler:
+            print(handler(notes))

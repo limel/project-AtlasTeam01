@@ -18,9 +18,9 @@ class Record:
 
     def edit_phone(self, old_phone: str, new_phone: str):
         phone = next((p for p in self.phones if p.value == old_phone), None)
-        if phone:
-            index = self.phones.index(phone)
-            self.phones[index] = Phone(new_phone)
+        if not phone:
+            raise ValueError(f"Phone {old_phone} not found")
+        self.phones[self.phones.index(phone)] = Phone(new_phone)
 
     def delete_phone(self, phone_to_remove: str):
         phone = next((p for p in self.phones if p.value == phone_to_remove), None)
