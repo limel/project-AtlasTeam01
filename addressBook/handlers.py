@@ -70,7 +70,7 @@ def search_contacts(book: AddressBook) -> str:
     if not pattern:
         return "Empty search, cancelled"
 
-    matched = [r for r in book.data.values() if match_record(r, field, pattern)]
+    matched = [r for r in book.values() if match_record(r, field, pattern)]
 
     if not matched:
         return "No contacts found"

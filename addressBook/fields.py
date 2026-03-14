@@ -61,10 +61,12 @@ class Birthday(Field):
                 "Invalid birthday. Use format DD.MM.YYYY and valid calendar date"
             ) from e
 
-        current_year = datetime.now().year
-        age = current_year - parsed_date.year
+        today = datetime.now().date()
+        age = today.year - parsed_date.year - (
+                (today.month, today.day) < (parsed_date.month, parsed_date.day)
+        )
 
-        if parsed_date.year > current_year:
+        if parsed_date > today:
             raise ValueError("Birthday cannot be in the future")
 
         if parsed_date.year < Birthday.MIN_YEAR:
