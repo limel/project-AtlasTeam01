@@ -30,51 +30,52 @@ ruff check .
 black .
 ```
 
-Apply Ruff auto-fixes before formatting:
 
-```bash
-ruff check . --fix
-black .
+# Atlas team project - 01
+
+---
+
+## For Users
+
+### Installation & Usage
+
+1. Install the package:
+	```bash
+	pip install .
+	```
+2. Activate your virtual environment (if used):
+	```bash
+	source .venv/bin/activate
+	```
+3. Run the bot from any directory:
+	```bash
+	atlas-assistant
+	```
+
+### Contacts menu
+
+Enter the contacts menu:
+```text
+contacts
+```
+Available commands:
+```text
+add-contact
+edit-contact
+delete-contact
+search-contacts
+show-all
+birthdays
+back
 ```
 
-## Usage
+### Notes menu
 
-The project supports two usage modes.
-
-### 1. Run from the repository
-
-Use this mode during development. Start the assistant bot from the repository root:
-
-```bash
-python main.py
-```
-
-### 2. Run as an installed package
-
-Use this mode if you want to launch the bot from any directory. First install the project:
-
-```bash
-pip install .
-```
-
-The bot CLI command to run it from any directory is:
-
-```bash
-atlas-assistant
-```
-
-If you installed it into a virtual environment, make sure that environment is activated before running the command.
-
-## Notes commands
-
-Enter the notes menu with:
-
+Enter the notes menu:
 ```text
 notes
 ```
-
-Available notes commands:
-
+Available commands:
 ```text
 add-note "title" content
 find-note "title"
@@ -87,31 +88,53 @@ all-notes
 back
 ```
 
-Examples:
+#### Features
+- Contacts: add, edit, delete, search, birthdays, show all.
+- Notes: add, edit, delete, tag, search by tag/title.
+- Case-insensitive search, duplicate handling, and truncation for long titles.
 
-```text
-add-note "Project plan" finish database schema
-find-note "Project plan"
-edit-note-title "Project plan" "Project plan v2"
-edit-note "Project plan v2" update API section
+---
 
-add-tag "Project plan v2" task urgent
-add-tag "Project plan v2" #important
+## For Developers
 
-find-by-tag task
-find-by-tag #urgent
+### Development setup
 
-delete-note "Project plan v2"
+1. Create and activate a virtual environment:
+	```bash
+	python3 -m venv .venv
+	source .venv/bin/activate
+	```
+2. Install dependencies:
+	```bash
+	pip install -r requirements.txt
+	```
+3. Install the project as a package:
+	```bash
+	pip install .
+	```
+
+### Formatting & Linting
+
+The shared formatting and linting configuration is stored in `pyproject.toml`.
+
+Run from the repository root:
+```bash
+ruff check .
+black .
+```
+Apply Ruff auto-fixes before formatting:
+```bash
+ruff check . --fix
+black .
 ```
 
-Notes behavior:
+### Running in development mode
 
-- Titles can contain multiple words.
-- Title matching is case-insensitive.
-- Long titles are truncated to 80 characters.
-- Duplicate titles receive a suffix like `(1)`.
-- Tags are case-insensitive and duplicates are ignored.
+Start the bot from the repository root:
+```bash
+python main.py
+```
 
-## Git ignore
+### .gitignore
 
 The `.gitignore` file excludes local virtual environments, Python cache files, and tool caches so each team member can work locally without committing machine-specific files.

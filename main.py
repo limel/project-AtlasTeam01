@@ -19,7 +19,7 @@ MAIN_MENU_CHOICES = [
 def main() -> None:
     book = book_serializer.load_data()
     notes = notes_serializer.load_data()
-    print("Welcome to the assistant bot!")
+    print("Welcome to the assistant bot! You can manage your contacts and notes here.")
 
     while True:
         command = questionary.select(
