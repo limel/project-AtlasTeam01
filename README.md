@@ -15,6 +15,12 @@ Install project dependencies:
 pip install -r requirements.txt
 ```
 
+Install the project itself as a package:
+
+```bash
+pip install .
+```
+
 The shared formatting and linting configuration is stored in `pyproject.toml`.
 
 Run the tools from the repository root:
@@ -37,6 +43,12 @@ Start the assistant bot from the repository root:
 
 ```bash
 python main.py
+```
+
+After `pip install .`, you can start it from any directory with:
+
+```bash
+atlas-assistant
 ```
 
 Enter the notes menu with:
