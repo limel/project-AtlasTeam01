@@ -15,6 +15,12 @@ Install project dependencies:
 pip install -r requirements.txt
 ```
 
+Install the project itself as a package:
+
+```bash
+pip install .
+```
+
 The shared formatting and linting configuration is stored in `pyproject.toml`.
 
 Run the tools from the repository root:
@@ -31,13 +37,35 @@ ruff check . --fix
 black .
 ```
 
-## Notes commands
+## Usage
 
-Start the assistant bot from the repository root:
+The project supports two usage modes.
+
+### 1. Run from the repository
+
+Use this mode during development. Start the assistant bot from the repository root:
 
 ```bash
 python main.py
 ```
+
+### 2. Run as an installed package
+
+Use this mode if you want to launch the bot from any directory. First install the project:
+
+```bash
+pip install .
+```
+
+The bot CLI command to run it from any directory is:
+
+```bash
+atlas-assistant
+```
+
+If you installed it into a virtual environment, make sure that environment is activated before running the command.
+
+## Notes commands
 
 Enter the notes menu with:
 

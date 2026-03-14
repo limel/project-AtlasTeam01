@@ -4,12 +4,14 @@ from decorators import input_error
 from helpers.command_helpers import ask_select, ask_text
 
 from .address_book import AddressBook
+from .fields import Birthday, Email, Phone
 from .record import Record
 
 CONTACTS_MENU_CHOICES = [
     questionary.Choice("Add contact", value="add"),
     questionary.Choice("Edit contact", value="edit"),
     questionary.Choice("Delete contact", value="delete"),
+    questionary.Choice("Search / Filter contacts", value="search"),
     questionary.Choice("Show all contacts", value="all"),
     questionary.Choice("Upcoming birthdays", value="birthdays"),
     questionary.Separator(),
@@ -21,18 +23,27 @@ Available commands:
   Add contact          - Create a new contact
   Edit contact         - Edit an existing contact's details
   Delete contact       - Remove a contact
+  Search / Filter contacts - Find by name, phone, email, etc. (partial match)
   Show all contacts    - Display all saved contacts
   Upcoming birthdays   - Show birthdays in the next 7 days
 """
 
 
 def run_contacts_menu(book: AddressBook) -> None:
-    from .handlers import add_contact, birthdays, delete_contact, edit_contact, show_all
+    from .handlers import (
+        add_contact,
+        birthdays,
+        delete_contact,
+        edit_contact,
+        search_contacts,
+        show_all,
+    )
 
     handlers = {
         "add": add_contact,
         "edit": edit_contact,
         "delete": delete_contact,
+        "search": search_contacts,
         "all": show_all,
         "birthdays": birthdays,
     }
@@ -72,7 +83,7 @@ EDIT_MENU_CHOICES = [
 
 
 def _handle_add_phone(record: Record) -> str:
-    phone = ask_text("Phone: ")
+    phone = ask_text("Phone: ", validator=Phone)
     record.add_phone(phone)
     return f"Phone {phone} added"
 
@@ -80,7 +91,7 @@ def _handle_add_phone(record: Record) -> str:
 def _handle_change_phone(record: Record) -> str:
     phones = [p.value for p in record.phones]
     old = ask_select(phones, "Which phone to change?", "No phone numbers to change")
-    new = ask_text("New phone: ", default=old)
+    new = ask_text("New phone: ", default=old, validator=Phone)
     record.edit_phone(old, new)
     return f"Phone updated from {old} to {new}"
 
@@ -93,7 +104,7 @@ def _handle_delete_phone(record: Record) -> str:
 
 
 def _handle_add_email(record: Record) -> str:
-    email = ask_text("Email: ")
+    email = ask_text("Email: ", validator=Email)
     record.add_email(email)
     return f"Email {email} added"
 
@@ -101,7 +112,7 @@ def _handle_add_email(record: Record) -> str:
 def _handle_edit_email(record: Record) -> str:
     emails = [e.value for e in record.emails]
     old = ask_select(emails, "Which email to edit?", "No emails to edit")
-    new = ask_text("New email: ", default=old)
+    new = ask_text("New email: ", default=old, validator=Email)
     record.edit_email(old, new)
     return f"Email updated from {old} to {new}"
 
@@ -127,7 +138,11 @@ def _handle_delete_address(record: Record) -> str:
 
 def _handle_set_birthday(record: Record) -> str:
     current = str(record.birthday) if record.birthday else ""
-    birthday = ask_text("Birthday (DD.MM.YYYY): ", default=current)
+    birthday = ask_text(
+        "Birthday (DD.MM.YYYY): ",
+        default=current,
+        validator=Birthday,
+    )
     record.add_birthday(birthday)
     return f"Birthday set to {birthday}"
 

@@ -6,14 +6,16 @@ from decorators import input_error
 from helpers.command_helpers import ask_contact, ask_text
 
 from .address_book import AddressBook
+from .fields import Phone
 from .menu import run_edit_menu
 from .record import Record
+from .utils import match_record, record_to_row
 
 
 @input_error
 def add_contact(book: AddressBook) -> str:
     name = ask_text("Contact name: ")
-    phone = ask_text("Phone (or leave empty): ", required=False)
+    phone = ask_text("Phone (or leave empty): ", required=False, validator=Phone)
 
     record = Record(name)
     if phone:
@@ -26,8 +28,10 @@ def add_contact(book: AddressBook) -> str:
 def delete_contact(book: AddressBook) -> str:
     record = ask_contact(book, "Which contact to delete?")
     name = record.name.value
-    confirm = questionary.confirm(f"Are you sure you want to delete '{name}'?", default=False).ask()
-    if not confirm:
+    confirm = questionary.confirm(
+        f"Are you sure you want to delete '{name}'?", default=False
+    ).ask()
+    if not confirm or book is None or record is None:
         return "Deletion cancelled"
     book.delete(str(record._id))
     return f"Contact {name} deleted"
@@ -40,14 +44,52 @@ def edit_contact(book: AddressBook) -> str:
 
 
 @input_error
+def search_contacts(book: AddressBook) -> str:
+    field = questionary.select(
+        "Filter by:",
+        choices=[
+            questionary.Choice("Name", value="name"),
+            questionary.Choice("Phone", value="phone"),
+            questionary.Choice("Email", value="email"),
+            questionary.Choice("Address", value="address"),
+            questionary.Choice("Birthday", value="birthday"),
+        ],
+    ).ask()
+
+    if field is None:
+        return "Search cancelled"
+
+    pattern = ask_text("Enter search value (partial OK): ").lower()
+    if not pattern:
+        return "Empty search, cancelled"
+
+    matched = [r for r in book.values() if match_record(r, field, pattern)]
+
+    if not matched:
+        return "No contacts found"
+
+    rows = [record_to_row(r) for r in matched]
+
+    return tabulate(
+        rows,
+        headers=["Name", "Phones", "Emails", "Birthday", "Address"],
+        tablefmt="grid",
+    )
+
+
+@input_error
 def show_all(book: AddressBook) -> str:
     if not book.data:
         return "No contacts yet"
 
     rows = []
     for record in book.values():
-        phones = "\n".join(p.value for p in record.phones) if record.phones else "- empty"
-        emails = "\n".join(e.value for e in record.emails) if record.emails else "- empty"
+        phones = (
+            "\n".join(p.value for p in record.phones) if record.phones else "- empty"
+        )
+        emails = (
+            "\n".join(e.value for e in record.emails) if record.emails else "- empty"
+        )
         birthday = str(record.birthday) if record.birthday else "- empty"
         address = record.address.value if record.address else "- empty"
         rows.append([record.name.value, phones, emails, birthday, address])
@@ -64,4 +106,6 @@ def birthdays(book: AddressBook) -> str:
     upcoming_birthdays = book.get_upcoming_birthdays()
     if not upcoming_birthdays:
         return "No upcoming birthdays"
-    return "\n".join(f"{bd['name']} - {bd['congratulation_date']}" for bd in upcoming_birthdays)
+    return "\n".join(
+        f"{bd['name']} - {bd['congratulation_date']}" for bd in upcoming_birthdays
+    )
