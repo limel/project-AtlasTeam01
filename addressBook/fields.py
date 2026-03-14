@@ -2,8 +2,9 @@
 from datetime import datetime
 
 import phonenumbers
+from email_validator import EmailNotValidError, validate_email
 from phonenumbers.phonenumberutil import NumberParseException
-from email_validator import validate_email, EmailNotValidError
+
 
 class Field:
     def __init__(self, value):
@@ -25,6 +26,17 @@ class Phone(Field):
         if not phone.startswith("+"):
             if len(phone) == 9:  # мобільний без коду (наприклад, 673000888)
                 phone = "+380" + phone
+
+        try:
+            parsed = phonenumbers.parse(phone, self.DEFAULT_COUNTRY)
+        except NumberParseException:
+            raise ValueError(f"Invalid phone number: {phone}") from None
+
+        if not phonenumbers.is_valid_number_for_region(parsed, self.DEFAULT_COUNTRY):
+            raise ValueError(f"Phone number is not valid for Ukraine: {phone}")
+        self.value = phonenumbers.format_number(
+            parsed, phonenumbers.PhoneNumberFormat.E164
+        )
 
         try:
             parsed = phonenumbers.parse(phone, self.DEFAULT_COUNTRY)
@@ -62,8 +74,10 @@ class Birthday(Field):
             ) from e
 
         today = datetime.now().date()
-        age = today.year - parsed_date.year - (
-                (today.month, today.day) < (parsed_date.month, parsed_date.day)
+        age = (
+            today.year
+            - parsed_date.year
+            - ((today.month, today.day) < (parsed_date.month, parsed_date.day))
         )
 
         if parsed_date > today:

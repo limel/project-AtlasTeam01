@@ -8,16 +8,16 @@ from .record import Record
 
 class AddressBook(UserDict):
     def add_record(self, new_record: Record):
-        self.data[new_record.name.value] = new_record
+        self.data[str(new_record._id)] = new_record
 
-    def delete(self, record_name: str):
-        if record_name in self.data:
-            del self.data[record_name]
+    def delete(self, record_id: str):
+        if record_id in self.data:
+            del self.data[record_id]
             return True
         return False
 
-    def find(self, record_name: str) -> Record | None:
-        return self.data.get(record_name)
+    def find_by_id(self, record_id: str) -> Record | None:
+        return self.data.get(record_id)
 
     def get_upcoming_birthdays(self):
         MAX_DAYS = 7

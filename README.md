@@ -30,11 +30,45 @@ ruff check .
 black .
 ```
 
-Apply Ruff auto-fixes before formatting:
+# Atlas team project - 01
 
-```bash
-ruff check . --fix
-black .
+---
+
+## For Users
+
+### Installation & Usage
+
+1. Install the package:
+   ```bash
+   pip install .
+   ```
+2. Activate your virtual environment (if used):
+   ```bash
+   source .venv/bin/activate
+   ```
+3. Run the bot from any directory:
+   ```bash
+   atlas-assistant
+   ```
+
+### Contacts menu
+
+Enter the contacts menu:
+
+```text
+contacts
+```
+
+Available commands:
+
+```text
+add-contact
+edit-contact
+delete-contact
+search-contacts
+show-all
+birthdays
+back
 ```
 
 ## Usage
@@ -65,53 +99,80 @@ atlas-assistant
 
 If you installed it into a virtual environment, make sure that environment is activated before running the command.
 
-## Notes commands
+## Notes menu
 
-Enter the notes menu with:
+Enter the notes menu:
 
 ```text
 notes
 ```
 
-Available notes commands:
+Available commands:
 
 ```text
-add-note "title" content
-find-note "title"
-edit-note-title "title" new title
-edit-note "title" new content
-delete-note "title"
-add-tag "title" tag [tag ...]
-find-by-tag tag [tag ...]
-all-notes
+add-note
+edit-note
+delete-note
+find-note
+add-tag
+find-by-tag
+show-all-notes
 back
 ```
 
-Examples:
+#### Features
 
-```text
-add-note "Project plan" finish database schema
-find-note "Project plan"
-edit-note-title "Project plan" "Project plan v2"
-edit-note "Project plan v2" update API section
+- Contacts: add, edit, delete, search, birthdays, show all.
+- Notes: add, edit, delete, tag, search by tag/title.
+- Case-insensitive search, duplicate handling, and truncation for long titles.
 
-add-tag "Project plan v2" task urgent
-add-tag "Project plan v2" #important
+---
 
-find-by-tag task
-find-by-tag #urgent
+## For Developers
 
-delete-note "Project plan v2"
+### Development setup
+
+1. Create and activate a virtual environment:
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Install the project as a package:
+   ```bash
+   pip install .
+   ```
+
+### Formatting & Linting
+
+The shared formatting and linting configuration is stored in `pyproject.toml`.
+
+Run from the repository root:
+
+```bash
+ruff check .
+black .
 ```
 
-Notes behavior:
+Apply Ruff auto-fixes before formatting:
 
-- Titles can contain multiple words.
-- Title matching is case-insensitive.
-- Long titles are truncated to 80 characters.
-- Duplicate titles receive a suffix like `(1)`.
-- Tags are case-insensitive and duplicates are ignored.
+```bash
+ruff check . --fix
+black .
+```
 
-## Git ignore
+### Running in development mode
+
+Start the bot from the repository root:
+
+```bash
+python main.py
+```
+
+### .gitignore
 
 The `.gitignore` file excludes local virtual environments, Python cache files, and tool caches so each team member can work locally without committing machine-specific files.
+

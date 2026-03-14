@@ -6,9 +6,9 @@ from decorators import input_error
 from helpers.command_helpers import ask_contact, ask_text
 
 from .address_book import AddressBook
+from .fields import Phone
 from .menu import run_edit_menu
 from .record import Record
-from .fields import Phone
 from .utils import match_record, record_to_row
 
 
@@ -17,37 +17,33 @@ def add_contact(book: AddressBook) -> str:
     name = ask_text("Contact name: ")
     phone = ask_text("Phone (or leave empty): ", required=False, validator=Phone)
 
-    record = book.find(name)
-    if record is None:
-        record = Record(name)
-        if phone:
-            record.add_phone(phone)
-        book.add_record(record)
-        return f"Contact {name} was successfully added"
-
+    record = Record(name)
     if phone:
         record.add_phone(phone)
-        return f"Contact {name} updated with new phone"
-
-    return "Contact already exists"
+    book.add_record(record)
+    return f"Contact {name} was successfully added"
 
 
 @input_error
 def delete_contact(book: AddressBook) -> str:
     record = ask_contact(book, "Which contact to delete?")
+    if record is None:
+        return "Deletion cancelled"
     name = record.name.value
     confirm = questionary.confirm(
         f"Are you sure you want to delete '{name}'?", default=False
     ).ask()
     if not confirm:
         return "Deletion cancelled"
-    book.delete(name)
+    book.delete(str(record._id))
     return f"Contact {name} deleted"
 
 
 @input_error
 def edit_contact(book: AddressBook) -> str:
     record = ask_contact(book, "Which contact to edit?")
+    if record is None:
+        return "Edit cancelled"
     return run_edit_menu(record)
 
 

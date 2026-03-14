@@ -32,7 +32,7 @@ def birthday_matches(record, pattern: str) -> bool:
         start_date = datetime.strptime(start_str, "%d.%m")
         end_date = datetime.strptime(end_str, "%d.%m")
     except ValueError:
-        raise ValueError("Invalid date format. Use DD.MM-DD.MM")
+        raise ValueError("Invalid date format. Use DD.MM-DD.MM") from None
 
     if start_date <= end_date:
         return start_date <= bd_date <= end_date
