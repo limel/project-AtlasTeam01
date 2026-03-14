@@ -1,14 +1,37 @@
 import questionary
 
 
-def ask_text(prompt: str, required: bool = True, default: str = "") -> str:
-    value = questionary.text(prompt, default=default).ask()
+def ask_text(
+    prompt: str,
+    required: bool = True,
+    default: str = "",
+    validator=None,
+) -> str:
+
+    def validate(text: str):
+        text = text.strip()
+
+        if required and not text:
+            return f"{prompt.rstrip(': ')} cannot be empty"
+
+        if validator and text:
+            try:
+                validator(text)
+            except ValueError as e:
+                return str(e)
+
+        return True
+
+    value = questionary.text(
+        prompt,
+        default=default,
+        validate=validate,
+    ).ask()
+
     if value is None:
         raise ValueError("Input cancelled by user")
-    value = value.strip()
-    if required and not value:
-        raise ValueError(f"{prompt.rstrip(': ')} cannot be empty")
-    return value
+
+    return value.strip()
 
 
 def ask_select(items: list[str], prompt: str, empty_msg: str) -> str:
