@@ -151,13 +151,60 @@ EDIT_HANDLERS = {
 }
 
 
+def get_edit_menu_choices(record: Record) -> list:
+    """Dynamically generate menu choices based on record fields."""
+    choices = [
+        questionary.Choice("Add phone", value="add-phone"),
+    ]
+    if record.phones:
+        choices.extend(
+            [
+                questionary.Choice("Change phone", value="change-phone"),
+                questionary.Choice("Delete phone", value="delete-phone"),
+            ]
+        )
+
+    choices.append(questionary.Choice("Add email", value="add-email"))
+    if record.emails:
+        choices.extend(
+            [
+                questionary.Choice("Edit email", value="edit-email"),
+                questionary.Choice("Delete email", value="delete-email"),
+            ]
+        )
+
+    if record.address:
+        choices.extend(
+            [
+                questionary.Choice("Edit address", value="set-address"),
+                questionary.Choice("Delete address", value="delete-address"),
+            ]
+        )
+    else:
+        choices.append(questionary.Choice("Set address", value="set-address"))
+
+    if record.birthday:
+        choices.extend(
+            [
+                questionary.Choice("Edit birthday", value="set-birthday"),
+                questionary.Choice("Delete birthday", value="delete-birthday"),
+            ]
+        )
+    else:
+        choices.append(questionary.Choice("Set birthday", value="set-birthday"))
+
+    choices.extend([questionary.Separator(), questionary.Choice("Back", value="back")])
+    return choices
+
+
 @input_error
 def run_edit_menu(record: Record) -> str:
     print(f"\n{record}\n")
 
+    edit_menu_choices = get_edit_menu_choices(record)
     command = questionary.select(
         f"Edit {record.name.value}:",
-        choices=EDIT_MENU_CHOICES,
+        choices=edit_menu_choices,
     ).ask()
 
     if command is None or command == "back":
