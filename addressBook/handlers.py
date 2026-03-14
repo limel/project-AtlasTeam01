@@ -8,13 +8,14 @@ from helpers.command_helpers import ask_contact, ask_text
 from .address_book import AddressBook
 from .menu import run_edit_menu
 from .record import Record
+from .fields import Phone
 from .utils import match_record, record_to_row
 
 
 @input_error
 def add_contact(book: AddressBook) -> str:
     name = ask_text("Contact name: ")
-    phone = ask_text("Phone (or leave empty): ", required=False)
+    phone = ask_text("Phone (or leave empty): ", required=False, validator=Phone)
 
     record = book.find(name)
     if record is None:
