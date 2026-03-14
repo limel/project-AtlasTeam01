@@ -27,11 +27,13 @@ def add_contact(book: AddressBook) -> str:
 @input_error
 def delete_contact(book: AddressBook) -> str:
     record = ask_contact(book, "Which contact to delete?")
+    if record is None:
+        return "Deletion cancelled"
     name = record.name.value
     confirm = questionary.confirm(
         f"Are you sure you want to delete '{name}'?", default=False
     ).ask()
-    if not confirm or book is None or record is None:
+    if not confirm:
         return "Deletion cancelled"
     book.delete(str(record._id))
     return f"Contact {name} deleted"
@@ -40,6 +42,8 @@ def delete_contact(book: AddressBook) -> str:
 @input_error
 def edit_contact(book: AddressBook) -> str:
     record = ask_contact(book, "Which contact to edit?")
+    if record is None:
+        return "Edit cancelled"
     return run_edit_menu(record)
 
 
