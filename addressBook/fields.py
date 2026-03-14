@@ -67,7 +67,7 @@ class Birthday(Field):
         )
 
         if parsed_date > today:
-            raise ValueError("Birthday cannot be in the future")
+            raise ValueError("Oops! Birthday cannot be later than today")
 
         if parsed_date.year < Birthday.MIN_YEAR:
             raise ValueError(f"Year must be after {Birthday.MIN_YEAR}")
