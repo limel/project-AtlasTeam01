@@ -1,7 +1,9 @@
 # addressBook/fields.py
-import re
 from datetime import datetime
 
+import phonenumbers
+from phonenumbers.phonenumberutil import NumberParseException
+from email_validator import validate_email, EmailNotValidError
 
 class Field:
     def __init__(self, value):
@@ -16,31 +18,31 @@ class Name(Field):
 
 
 class Phone(Field):
-    PHONE_NUMBER_REGEX = r"^\+?\d[\d\s-]{8,14}\d$"
-
-    @staticmethod
-    def normalize(phone: str) -> str:
-        """Return a normalized phone number with spaces and hyphens removed."""
-        return re.sub(r"[\s-]", "", phone)
+    DEFAULT_COUNTRY = "UA"  # Україна
 
     def __init__(self, phone: str):
-        if not re.match(Phone.PHONE_NUMBER_REGEX, phone):
-            raise ValueError("Invalid phone number format")
-        normalized_phone = Phone.normalize(phone)
-        super().__init__(normalized_phone)
+        phone = phone.strip().replace(" ", "").replace("-", "")  # видаляємо пробіли та дефіси
+        if not phone.startswith("+"):
+            # додаємо код України, якщо користувач ввів короткий номер
+            if len(phone) == 9:  # мобільний без коду (наприклад, 673000888)
+                phone = "+380" + phone
 
+        try:
+            parsed = phonenumbers.parse(phone, self.DEFAULT_COUNTRY)
+        except NumberParseException:
+            raise ValueError(f"Invalid phone number: {phone}")
+
+        if not phonenumbers.is_valid_number_for_region(parsed, self.DEFAULT_COUNTRY):
+            raise ValueError(f"Phone number is not valid for Ukraine: {phone}")
+        self.value = phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
 
 class Email(Field):
-    EMAIL_REGEX = r"^[\w\.-]+@[\w\.-]+\.\w+$"
-
     def __init__(self, email: str):
-        if not self.is_valid(email):
-            raise ValueError(f"Invalid email address: {email}")
-        self.value = email
-
-    @classmethod
-    def is_valid(cls, email: str) -> bool:
-        return re.match(cls.EMAIL_REGEX, email) is not None
+        try:
+            v = validate_email(email, check_deliverability=False)
+            self.value = v.email
+        except EmailNotValidError as e:
+            raise ValueError(f"Invalid email address: {email}") from e
 
 
 class Address(Field):
@@ -76,3 +78,4 @@ class Birthday(Field):
 
     def __str__(self):
         return self.value.strftime(Birthday.DATE_FORMAT)
+
