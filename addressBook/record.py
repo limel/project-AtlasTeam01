@@ -1,10 +1,13 @@
 # addressBook/record.py
+import uuid
+
 from .fields import Address, Birthday, Email, Name, Phone
 
 
 class Record:
     def __init__(self, name):
         self.name = Name(name)
+        self._id = uuid.uuid4()
         self.phones: list[Phone] = []
         self.emails: list[Email] = []
         self.address: Address | None = None

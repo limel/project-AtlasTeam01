@@ -15,31 +15,21 @@ def add_contact(book: AddressBook) -> str:
     name = ask_text("Contact name: ")
     phone = ask_text("Phone (or leave empty): ", required=False)
 
-    record = book.find(name)
-    if record is None:
-        record = Record(name)
-        if phone:
-            record.add_phone(phone)
-        book.add_record(record)
-        return f"Contact {name} was successfully added"
-
+    record = Record(name)
     if phone:
         record.add_phone(phone)
-        return f"Contact {name} updated with new phone"
-
-    return "Contact already exists"
+    book.add_record(record)
+    return f"Contact {name} was successfully added"
 
 
 @input_error
 def delete_contact(book: AddressBook) -> str:
     record = ask_contact(book, "Which contact to delete?")
     name = record.name.value
-    confirm = questionary.confirm(
-        f"Are you sure you want to delete '{name}'?", default=False
-    ).ask()
+    confirm = questionary.confirm(f"Are you sure you want to delete '{name}'?", default=False).ask()
     if not confirm:
         return "Deletion cancelled"
-    book.delete(name)
+    book.delete(str(record._id))
     return f"Contact {name} deleted"
 
 
@@ -56,12 +46,8 @@ def show_all(book: AddressBook) -> str:
 
     rows = []
     for record in book.values():
-        phones = (
-            "\n".join(p.value for p in record.phones) if record.phones else "- empty"
-        )
-        emails = (
-            "\n".join(e.value for e in record.emails) if record.emails else "- empty"
-        )
+        phones = "\n".join(p.value for p in record.phones) if record.phones else "- empty"
+        emails = "\n".join(e.value for e in record.emails) if record.emails else "- empty"
         birthday = str(record.birthday) if record.birthday else "- empty"
         address = record.address.value if record.address else "- empty"
         rows.append([record.name.value, phones, emails, birthday, address])
@@ -78,6 +64,4 @@ def birthdays(book: AddressBook) -> str:
     upcoming_birthdays = book.get_upcoming_birthdays()
     if not upcoming_birthdays:
         return "No upcoming birthdays"
-    return "\n".join(
-        f"{bd['name']} - {bd['congratulation_date']}" for bd in upcoming_birthdays
-    )
+    return "\n".join(f"{bd['name']} - {bd['congratulation_date']}" for bd in upcoming_birthdays)

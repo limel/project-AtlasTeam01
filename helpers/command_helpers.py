@@ -1,4 +1,5 @@
 import questionary
+from questionary import Choice
 
 
 def ask_text(prompt: str, required: bool = True, default: str = "") -> str:
@@ -11,11 +12,10 @@ def ask_text(prompt: str, required: bool = True, default: str = "") -> str:
     return value
 
 
-def ask_select(items: list[str], prompt: str, empty_msg: str) -> str:
+def ask_select(items: list[Choice], prompt: str, empty_msg: str) -> str:
     if not items:
         raise ValueError(empty_msg)
-    if len(items) == 1:
-        return items[0]
+
     value = questionary.select(prompt, choices=items).ask()
     if value is None:
         raise ValueError("Selection cancelled by user")
@@ -23,9 +23,15 @@ def ask_select(items: list[str], prompt: str, empty_msg: str) -> str:
 
 
 def ask_contact(book, prompt: str = "Select contact:"):
-    names = list(book.data.keys())
-    name = ask_select(names, prompt, "No contacts yet")
-    return book.find(name)
+    choices = [
+        Choice(
+            title=f"{rec.name.value}\n{(' ' * 3)}(Phones: {', '.join(p.value for p in rec.phones) or 'N/A'})",
+            value=str(rec._id),
+        )
+        for rec in book.values()
+    ]
+    id = ask_select(choices, prompt, "No contacts yet")
+    return book.find_by_id(id)
 
 
 def ask_title(notes, prompt: str = "Select note:") -> str:
