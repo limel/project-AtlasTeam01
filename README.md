@@ -69,7 +69,36 @@ birthdays
 back
 ```
 
-### Notes menu
+## Usage
+
+The project supports two usage modes.
+
+### 1. Run from the repository
+
+Use this mode during development. Start the assistant bot from the repository root:
+
+```bash
+python main.py
+```
+
+### 2. Run as an installed package
+
+Use this mode if you want to launch the bot from any directory. First install the project:
+
+```bash
+pip install .
+```
+
+The bot CLI command to run it from any directory is:
+
+```bash
+atlas-assistant
+```
+
+If you installed it into a virtual environment, make sure that environment is activated before running the command.
+
+
+## Notes menu
 
 Enter the notes menu:
 ```text
@@ -77,14 +106,13 @@ notes
 ```
 Available commands:
 ```text
-add-note "title" content
-find-note "title"
-edit-note-title "title" new title
-edit-note "title" new content
-delete-note "title"
-add-tag "title" tag [tag ...]
-find-by-tag tag [tag ...]
-all-notes
+add-note
+edit-note
+delete-note
+find-note
+add-tag
+find-by-tag
+show-all-notes
 back
 ```
 
@@ -100,18 +128,18 @@ back
 ### Development setup
 
 1. Create and activate a virtual environment:
-	```bash
-	python3 -m venv .venv
-	source .venv/bin/activate
-	```
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
 2. Install dependencies:
-	```bash
-	pip install -r requirements.txt
-	```
+   ```bash
+   pip install -r requirements.txt
+   ```
 3. Install the project as a package:
-	```bash
-	pip install .
-	```
+   ```bash
+   pip install .
+   ```
 
 ### Formatting & Linting
 
