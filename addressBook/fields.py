@@ -49,12 +49,30 @@ class Address(Field):
 
 class Birthday(Field):
     DATE_FORMAT = "%d.%m.%Y"
+    MIN_YEAR = 1900
+    MAX_AGE = 120
 
     def __init__(self, date: str):
         try:
-            self.value = datetime.strptime(date, Birthday.DATE_FORMAT).date()
+            parsed_date = datetime.strptime(date, Birthday.DATE_FORMAT).date()
         except ValueError as e:
-            raise ValueError("Invalid date format. Use DD.MM.YYYY") from e
+            raise ValueError(
+                "Invalid birthday. Use format DD.MM.YYYY and valid calendar date"
+            ) from e
+
+        current_year = datetime.now().year
+        age = current_year - parsed_date.year
+
+        if parsed_date.year > current_year:
+            raise ValueError("Birthday cannot be in the future")
+
+        if parsed_date.year < Birthday.MIN_YEAR:
+            raise ValueError(f"Year must be after {Birthday.MIN_YEAR}")
+
+        if age > Birthday.MAX_AGE:
+            raise ValueError("Birthday year is unrealistic")
+
+        self.value = parsed_date
 
     def __str__(self):
         return self.value.strftime(Birthday.DATE_FORMAT)

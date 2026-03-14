@@ -8,6 +8,7 @@ from helpers.command_helpers import ask_contact, ask_text
 from .address_book import AddressBook
 from .menu import run_edit_menu
 from .record import Record
+from .utils import match_record, record_to_row
 
 
 @input_error
@@ -50,21 +51,45 @@ def edit_contact(book: AddressBook) -> str:
 
 
 @input_error
+def search_contacts(book: AddressBook) -> str:
+    field = questionary.select(
+        "Filter by:",
+        choices=[
+            questionary.Choice("Name", value="name"),
+            questionary.Choice("Phone", value="phone"),
+            questionary.Choice("Email", value="email"),
+            questionary.Choice("Address", value="address"),
+            questionary.Choice("Birthday", value="birthday"),
+        ],
+    ).ask()
+
+    if field is None:
+        return "Search cancelled"
+
+    pattern = ask_text("Enter search value (partial OK): ").lower()
+    if not pattern:
+        return "Empty search, cancelled"
+
+    matched = [r for r in book.data.values() if match_record(r, field, pattern)]
+
+    if not matched:
+        return "No contacts found"
+
+    rows = [record_to_row(r) for r in matched]
+
+    return tabulate(
+        rows,
+        headers=["Name", "Phones", "Emails", "Birthday", "Address"],
+        tablefmt="grid",
+    )
+
+
+@input_error
 def show_all(book: AddressBook) -> str:
     if not book.data:
         return "No contacts yet"
 
-    rows = []
-    for record in book.values():
-        phones = (
-            "\n".join(p.value for p in record.phones) if record.phones else "- empty"
-        )
-        emails = (
-            "\n".join(e.value for e in record.emails) if record.emails else "- empty"
-        )
-        birthday = str(record.birthday) if record.birthday else "- empty"
-        address = record.address.value if record.address else "- empty"
-        rows.append([record.name.value, phones, emails, birthday, address])
+    rows = [record_to_row(r) for r in book.values()]
 
     return tabulate(
         rows,
