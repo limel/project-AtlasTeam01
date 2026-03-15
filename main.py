@@ -1,61 +1,42 @@
-from book_serialization import load_data, save_data
-from decorators import input_error
-from command_handlers import (
-    add_contact,
-    show_phone,
-    change_contact,
-    show_all,
-    add_birthday,
-    show_birthday,
-    birthdays,
-)
+import questionary
+
+from addressBook.address_book import AddressBook
+from addressBook.menu import run_contacts_menu
+from notes import Notes, run_notes_menu
+from store.serializer import PickleSerializer
+
+book_serializer = PickleSerializer("address_book", AddressBook)
+notes_serializer = PickleSerializer("notes", Notes)
+
+MAIN_MENU_CHOICES = [
+    questionary.Choice("Contacts", value="contacts"),
+    questionary.Choice("Notes", value="notes"),
+    questionary.Separator(),
+    questionary.Choice("Exit", value="exit"),
+]
 
 
-@input_error
-def parse_input(user_input):
-    cmd, *args = user_input.split()
-    cmd = cmd.strip().lower()
-    return cmd, *args
+def main() -> None:
+    book = book_serializer.load_data()
+    notes = notes_serializer.load_data()
+    print("Welcome to the assistant bot! You can manage your contacts and notes here.")
 
-
-def main():
-    book = load_data()
-    print("Welcome to the assistant bot!")
     while True:
-        user_input = input("Enter a command: ")
-        command, *args = parse_input(user_input)
+        command = questionary.select(
+            "Choose a mode:",
+            choices=MAIN_MENU_CHOICES,
+        ).ask()
 
-        if command in ["close", "exit"]:
-            save_data(book)
+        if command is None or command == "exit":
+            book_serializer.save_data(book)
+            notes_serializer.save_data(notes)
             print("Good bye!")
             break
 
-        elif command == "hello":
-            print("How can I help you?")
-
-        elif command == "add":
-            print(add_contact(args, book))
-
-        elif command == "change":
-            print(change_contact(args, book))
-
-        elif command == "phone":
-            print(show_phone(args, book))
-
-        elif command == "all":
-            print(show_all(book))
-
-        elif command == "add-birthday":
-            print(add_birthday(args, book))
-
-        elif command == "show-birthday":
-            print(show_birthday(args, book))
-
-        elif command == "birthdays":
-            print(birthdays(book))
-
-        else:
-            print("Invalid command.")
+        if command == "contacts":
+            run_contacts_menu(book)
+        elif command == "notes":
+            run_notes_menu(notes)
 
 
 if __name__ == "__main__":
