@@ -12,6 +12,12 @@ from .record import Record
 from .utils import match_record, record_to_row
 
 
+def _validate_days_ahead(value: str):
+    days_ahead = int(value)
+    if days_ahead <= 0:
+        raise ValueError("Number of days must be greater than 0")
+
+
 @input_error
 def add_contact(book: AddressBook) -> str:
     name = ask_text("Contact name: ")
@@ -97,7 +103,13 @@ def show_all(book: AddressBook) -> str:
 
 @input_error
 def birthdays(book: AddressBook) -> str:
-    upcoming_birthdays = book.get_upcoming_birthdays()
+    days_ahead = int(
+        ask_text(
+            "Show birthdays for the next how many days? ",
+            validator=_validate_days_ahead,
+        )
+    )
+    upcoming_birthdays = book.get_upcoming_birthdays(days_ahead)
     if not upcoming_birthdays:
         return "No upcoming birthdays"
     return "\n".join(

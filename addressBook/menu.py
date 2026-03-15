@@ -25,7 +25,7 @@ Available commands:
   Delete contact       - Remove a contact
   Search / Filter contacts - Find by name, phone, email, etc. (partial match)
   Show all contacts    - Display all saved contacts
-  Upcoming birthdays   - Show birthdays in the next 7 days
+  Upcoming birthdays   - Show birthdays within a chosen date range
 """
 
 

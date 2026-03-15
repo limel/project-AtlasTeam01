@@ -19,10 +19,9 @@ class AddressBook(UserDict):
     def find_by_id(self, record_id: str) -> Record | None:
         return self.data.get(record_id)
 
-    def get_upcoming_birthdays(self):
-        MAX_DAYS = 7
+    def get_upcoming_birthdays(self, days_ahead: int):
         today = datetime.today().date()
-        max_date = today + timedelta(days=MAX_DAYS)
+        max_date = today + timedelta(days=days_ahead)
         upcoming = []
 
         for record in self.data.values():

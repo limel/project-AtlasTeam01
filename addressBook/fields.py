@@ -38,18 +38,6 @@ class Phone(Field):
             parsed, phonenumbers.PhoneNumberFormat.E164
         )
 
-        try:
-            parsed = phonenumbers.parse(phone, self.DEFAULT_COUNTRY)
-        except NumberParseException:
-            raise ValueError(f"Invalid phone number: {phone}") from None
-
-        if not phonenumbers.is_valid_number_for_region(parsed, self.DEFAULT_COUNTRY):
-            raise ValueError(f"Phone number is not valid for Ukraine: {phone}")
-        self.value = phonenumbers.format_number(
-            parsed,
-            phonenumbers.PhoneNumberFormat.E164,
-        )
-
 
 class Email(Field):
     def __init__(self, email: str):
